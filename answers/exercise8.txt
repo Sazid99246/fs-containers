@@ -1,0 +1,100 @@
+D:\Full Stack Open\fs-containers\todo-app\todo-backend>docker compose -f docker-compose.dev.yml up -d
+[+] up 2/2
+ ✔ Network todo-backend_default   Created                                                                                                               0.1s
+ ✔ Container todo-backend-mongo-1 Started                                                                                                               0.9s
+
+D:\Full Stack Open\fs-containers\todo-app\todo-backend>docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS         PORTS                                           NAMES
+d1e2f0e90ec9   mongo     "docker-entrypoint.s…"   10 seconds ago   Up 9 seconds   0.0.0.0:3456->27017/tcp, [::]:3456->27017/tcp   todo-backend-mongo-1
+
+D:\Full Stack Open\fs-containers\todo-app\todo-backend>docker exec -it todo-backend-mongo-1 mongosh -u root -p example --authenticationDatabase admin
+Current Mongosh Log ID: 6adb899f83dd6796cc4a9287
+Connecting to:          mongodb://<credentials>@127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&authSource=admin&appName=mongosh+2.13.0
+Using MongoDB:          9.0.4
+Using Mongosh:          2.13.0
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+
+To help improve our products, pseudo-anonymous usage data is collected from interactive and agentic sessions only, and sent to MongoDB periodically (https://www.mongodb.com/legal/privacy-policy).
+You can opt-out by running the disableTelemetry() command.
+
+------
+   The server generated these startup warnings when booting
+   2026-10-23T16:20:50.471+00:00: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem
+   2026-10-23T16:20:51.285+00:00: For customers running the current memory allocator, we suggest changing the contents of the following sysfsFile
+   2026-10-23T16:20:51.285+00:00: For customers running the current memory allocator, we suggest changing the contents of the following sysfsFile
+   2026-10-23T16:20:51.285+00:00: We suggest setting the contents of sysfsFile to 0.
+   2026-10-23T16:20:51.285+00:00: We suggest setting swappiness to 0 or 1, as swapping can cause performance problems.
+------
+
+test> show dbs
+admin         100.00 KiB
+config         12.00 KiB
+local          72.00 KiB
+the_database   40.00 KiB
+
+test> use the_database
+switched to db the_database
+
+the_database> show collections
+todos
+
+the_database> db.todos.find({})
+[
+  {
+    _id: ObjectId('6adb8961dbab6f7dd3c104e8'),
+    text: 'Write code',
+    done: true
+  },
+  {
+    _id: ObjectId('6adb8961dbab6f7dd3c104e9'),
+    text: 'Learn about containers',
+    done: false
+  }
+]
+
+the_database> db.todos.insertOne({
+|   text: "Increase the number of tools in my tool belt",
+|   done: false
+| })
+{
+  acknowledged: true,
+  insertedId: ObjectId('6adb89f583dd6796cc4a9288')
+}
+
+the_database> db.todos.find({
+|   text: "Increase the number of tools in my tool belt"
+| })
+[
+  {
+    _id: ObjectId('6adb89f583dd6796cc4a9288'),
+    text: 'Increase the number of tools in my tool belt',
+    done: false
+  }
+]
+
+the_database> exit
+
+What's next:
+    Try Docker Debug for seamless, persistent debugging tools in any container or image → docker debug todo-backend-mongo-1
+    Learn more at https://docs.docker.com/go/debug-cli/
+
+D:\Full Stack Open\fs-containers\todo-app\todo-backend>set "MONGO_URL=mongodb://the_username:the_password@localhost:3456/the_database?authSource=the_database"
+
+D:\Full Stack Open\fs-containers\todo-app\todo-backend>npm run dev
+
+> todo-express-backend@0.0.0 dev
+> nodemon ./bin/www
+
+[nodemon] 3.1.14
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,cjs,json
+[nodemon] starting `node ./bin/www`
+GET / 200 9.842 ms - 114
+GET /favicon.ico 404 4.690 ms - 150
+GET / 200 0.951 ms - 114
+GET /todos 200 44.385 ms - 250
+^C
+D:\Full Stack Open\fs-containers\todo-app\todo-backend>
